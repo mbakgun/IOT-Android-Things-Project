@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">MotionSense Android</string>
+    <string name="default_notification_channel_id">1</string>
+    <string name="click_to_add_device">You din\'t sync with any Device</string>
+    <string name="no_notification">You don\'t have any Notification</string>
+    <string name="device_name_label">Device Name:%s</string>
+    <string name="device_id_label">Device Id:%s</string>
+    <string name="device_active_label">Device Active</string>
+    <string name="device_id_create_date">Device Create Date:%s</string>
+    <string name="device_id">Device Id</string>
+    <string name="devices">Devices</string>
+    <string name="put_device_name_label">Set Device Name</string>
+    <string name="update_device">Device Changing</string>
+
+
+</resources>

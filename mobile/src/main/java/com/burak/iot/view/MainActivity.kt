@@ -1,0 +1,111 @@
+package com.burak.iot.view
+
+import android.app.AlertDialog
+import android.app.Dialog
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
+import android.databinding.BindingAdapter
+import android.databinding.DataBindingUtil
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
+import android.widget.ImageView
+import com.burak.iot.R
+import com.burak.iot.R.id.recyclerView
+import com.burak.iot.R.id.textViewAdd
+import com.burak.iot.databinding.ActivityMainBinding
+import com.burak.iot.databinding.DetailDialogBinding
+import com.burak.iot.model.notification.Notification
+import com.burak.iot.viewmodel.DeviceViewModel
+import com.burak.iot.viewmodel.NotificationViewModel
+import com.google.firebase.FirebaseApp
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_main.*
+
+
+class MainActivity : AppCompatActivity() {
+
+    lateinit var binding: ActivityMainBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        val dvm = ViewModelProviders.of(this).get(DeviceViewModel::class.java)
+        val nvm = ViewModelProviders.of(this).get(NotificationViewModel::class.java)
+        binding.devicesVm = dvm
+        binding.notificationVm = nvm
+        recyclerView.setHasFixedSize(true)
+        val adapter = NotificationAdapter { item -> showDetailDialog(item) }
+        recyclerView.adapter = adapter
+        dvm.loadDevicesSummaries().observe(this, Observer {
+            nvm.notificationProcessor.getNotificationList(nvm)
+            if (dvm.deviceProcessor.repository.liveData.value?.isNotEmpty()!!) {
+                textViewAdd.setText(R.string.no_notification)
+            }
+            invalidateOptionsMenu()
+        })
+        nvm.loadNotificationSummaries().observe(this, Observer {
+            if (it!!.isNotEmpty()) {
+                recyclerView.visibility = View.VISIBLE
+                textViewAdd.visibility = View.GONE
+                adapter.updateList(it)
+            } else {
+                textViewAdd.visibility = View.VISIBLE
+                adapter.updateList(it)
+            }
+        })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (binding.devicesVm?.db?.getDevices()?.isNotEmpty()!!)
+            menuInflater.inflate(R.menu.menu_home, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_devices -> {
+                val transaction = supportFragmentManager.beginTransaction()
+                transaction.add(R.id.coordinatorLayout, LoadDevicesDetailFragment())
+                transaction.addToBackStack("loadDevicesDetailFragment")
+                transaction.commitAllowingStateLoss()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+
+    class DataBindingComponent {
+        companion object {
+            @JvmStatic
+            @BindingAdapter("load_image")
+            fun ImageView.setImageUrl(url: String) {
+                Picasso.get().load(url).into(this)
+            }
+        }
+    }
+
+    private fun showDetailDialog(notification: Notification) {
+        val dialog = Dialog(this)
+        val detailDialogBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.detail_dialog, null, false) as DetailDialogBinding
+        detailDialogBinding.item = notification
+        dialog.setContentView(detailDialogBinding.root)
+        dialog.setCancelable(true)
+        dialog.show()
+    }
+
+    fun addDevice(viewClicked: View) {
+            val view = layoutInflater.inflate(R.layout.add_device_dialog, null)
+            val alertDialog = AlertDialog.Builder(this@MainActivity).create()
+            val etComments = view.findViewById(R.id.etComments) as EditText
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { _, _ -> binding.devicesVm!!.addDevice(etComments.text.toString()) }
+            alertDialog.setView(view);
+            alertDialog.show();
+    }
+}

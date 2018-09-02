@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.burak.iot.model.notification.Notification" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/dialog"
+        android:layout_width="220dp"
+        android:layout_height="160dp">
+
+
+        <ImageView
+            android:id="@+id/imageViewImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:load_image="@{item.imageUrl}"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/textViewSentDate" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

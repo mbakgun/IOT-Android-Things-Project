@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.burak.iot.utils.DateUtils" />
+
+        <variable
+            name="item"
+            type="com.burak.iot.model.device.Device" />
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        tools:showIn="@layout/saved_devices_list">
+
+
+        <TextView
+            android:id="@+id/textViewDeviceId"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:text="@{@string/device_id_label(item.deviceId)}"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Device Id: 123123-13123123-4" />
+
+        <TextView
+            android:id="@+id/textViewSentDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@{@string/device_id_create_date(DateUtils.formatDate(item.createDate))}"
+            app:layout_constraintStart_toStartOf="@+id/textViewDeviceId"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDeviceId"
+            tools:text="Device Create Date: 17:22 29/08/2018" />
+
+        <EditText
+            android:id="@+id/editTextDeviceName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/put_device_name_label"
+            android:text="@={item.name}"
+            android:imeOptions="actionSend"
+            android:includeFontPadding="false"
+            android:inputType="text"
+            android:lineSpacingExtra="0dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:minLines="1"
+            android:singleLine="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewSentDate"
+            tools:visibility="visible" />
+
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:checked="@{item.active}"
+            android:switchPadding="8dp"
+            android:text="@string/device_active_label"
+            android:textColor="@android:color/tab_indicator_text"
+            app:layout_constraintStart_toStartOf="@+id/textViewSentDate"
+            app:layout_constraintTop_toBottomOf="@+id/editTextDeviceName" />
+
+        <ImageView
+            android:id="@+id/imageViewSave"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/ic_save_gray_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/switch1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/switch1" />
+
+
+    </android.support.constraint.ConstraintLayout>
+</layout>
