@@ -12,19 +12,18 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/dialog"
-        android:layout_width="220dp"
-        android:layout_height="160dp">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
 
         <ImageView
             android:id="@+id/imageViewImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:load_image="@{item.imageUrl}"
-            card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/textViewSentDate" />
+            card_view:layout_constraintBottom_toBottomOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>
