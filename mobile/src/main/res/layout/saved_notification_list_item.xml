@@ -61,8 +61,11 @@
             <ImageView
                 android:id="@+id/imageViewImage"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="125dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:scaleType="centerCrop"
                 app:load_image="@{item.imageUrl}"
                 card_view:layout_constraintTop_toBottomOf="@+id/textViewDeviceId" />
 
@@ -70,7 +73,6 @@
                 android:id="@+id/textViewSentDate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@{DateUtils.formatDate(item.sentDate)}"
                 card_view:layout_constraintEnd_toEndOf="@+id/imageViewImage"
