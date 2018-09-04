@@ -38,6 +38,7 @@
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="false"
                     android:visibility="gone"
                     app:layoutManager="LinearLayoutManager"
                     tools:listitem="@layout/saved_notification_list_item"
