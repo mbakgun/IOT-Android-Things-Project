@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.text.TextUtils
 import android.util.Log
 import com.burak.iot.network.NetworkRepository
-import com.burak.iot.network.Response.GetNotificationListResponse
+import com.burak.iot.network.response.GetNotificationListResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

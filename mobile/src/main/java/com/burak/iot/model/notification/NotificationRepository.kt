@@ -13,6 +13,11 @@ class NotificationRepository {
         liveData.value = savedNotifications.values.toList()
     }
 
+    fun deleteNotification(sentDate: Long) {
+        savedNotifications.remove(sentDate)
+        liveData.value = savedNotifications.values.toList()
+    }
+
     fun loadNotifications(): LiveData<List<Notification>> {
         liveData.value = savedNotifications.values.toList()
         return liveData

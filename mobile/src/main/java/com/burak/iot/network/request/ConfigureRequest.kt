@@ -1,4 +1,4 @@
-package com.burak.iot.network.Response
+package com.burak.iot.network.request
 
 import com.google.gson.annotations.SerializedName
 

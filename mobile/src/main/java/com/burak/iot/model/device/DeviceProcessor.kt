@@ -3,9 +3,9 @@ package com.burak.iot.model.device
 import android.arch.lifecycle.LiveData
 import android.util.Log
 import com.burak.iot.network.NetworkRepository
-import com.burak.iot.network.Response.AuthRequest
-import com.burak.iot.network.Response.AuthResponse
-import com.burak.iot.network.Response.ConfigureRequest
+import com.burak.iot.network.request.AuthRequest
+import com.burak.iot.network.request.ConfigureRequest
+import com.burak.iot.network.response.AuthResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
