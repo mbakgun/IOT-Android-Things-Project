@@ -4,6 +4,8 @@ import android.arch.lifecycle.LiveData
 import android.text.TextUtils
 import android.util.Log
 import com.burak.iot.network.NetworkRepository
+import com.burak.iot.network.request.DeleteNotificationRequest
+import com.burak.iot.network.response.DeleteNotificationResponse
 import com.burak.iot.network.response.GetNotificationListResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -14,10 +16,37 @@ class NotificationProcessor(val repository: NotificationRepository = Notificatio
     interface OnNotificationListener {
         val generatedTokens: MutableList<String>
         fun onSuccess(notification: MutableList<Notification>)
+        fun onDelete(sentDate: Long)
     }
 
     fun saveNotification(notification: MutableList<Notification>) {
         repository.saveNotification(notification)
+    }
+
+    fun deleteNotification(onNotificationListener: OnNotificationListener, sentDate: Long) {
+        onNotificationListener.generatedTokens.forEach { generatedToken ->
+            val call = networkRepository.iotService.deleteNotification(generatedToken, DeleteNotificationRequest(sentDate))
+            call.enqueue(object : Callback<DeleteNotificationResponse> {
+                override fun onResponse(call: Call<DeleteNotificationResponse>?, response: Response<DeleteNotificationResponse>?) =
+                        if (response != null && response.isSuccessful) {
+                            val result = response.body()?.result?.deleteStatus
+                            when (result) {
+                                true -> {
+                                    repository.deleteNotification(sentDate)
+                                    onNotificationListener.onDelete(sentDate)
+                                }
+                                false -> onFailure(call, Throwable("Bad Request"))
+                                null -> onFailure(call, Throwable("Bad Request"))
+                            }
+                        } else {
+                            onFailure(call, Throwable("Bad Response"))
+                        }
+
+                override fun onFailure(call: Call<DeleteNotificationResponse>?, t: Throwable?) {
+                    Log.e("Response Failure", t?.message, t)
+                }
+            })
+        }
     }
 
     fun mergeLocalNotificationList(dataList: MutableList<Notification>) {

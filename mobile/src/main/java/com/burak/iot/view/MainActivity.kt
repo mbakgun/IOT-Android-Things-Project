@@ -8,6 +8,8 @@ import android.databinding.BindingAdapter
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -15,11 +17,12 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import com.burak.iot.R
-import com.burak.iot.R.id.recyclerView
-import com.burak.iot.R.id.textViewAdd
 import com.burak.iot.databinding.ActivityMainBinding
 import com.burak.iot.databinding.DetailDialogBinding
 import com.burak.iot.model.notification.Notification
+import com.burak.iot.utils.ShareImageUtil
+import com.burak.iot.utils.SwipeToDeleteCallback
+import com.burak.iot.utils.SwipeToShareCallback
 import com.burak.iot.viewmodel.DeviceViewModel
 import com.burak.iot.viewmodel.NotificationViewModel
 import com.google.firebase.FirebaseApp
@@ -30,6 +33,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
+    val shareImage by lazy { ShareImageUtil() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +46,24 @@ class MainActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
         val adapter = NotificationAdapter { item -> showDetailDialog(item) }
         recyclerView.adapter = adapter
+        val swipeHandlerDelete = object : SwipeToDeleteCallback(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                nvm.notificationListener?.let {
+                    nvm.notificationProcessor.deleteNotification(it, adapter.notificationSummaries[viewHolder.adapterPosition].sentDate)
+                }
+                adapter.notifyItemChanged(viewHolder.adapterPosition)
+            }
+        }
+        val swipeHandlerShare = object : SwipeToShareCallback(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                shareImage.shareImage(adapter.notificationSummaries[viewHolder.adapterPosition].imageUrl, this@MainActivity)
+                adapter.notifyItemChanged(viewHolder.adapterPosition)
+            }
+        }
+        val itemTouchHelperDelete = ItemTouchHelper(swipeHandlerDelete)
+        itemTouchHelperDelete.attachToRecyclerView(recyclerView)
+        val itemTouchHelperShare = ItemTouchHelper(swipeHandlerShare)
+        itemTouchHelperShare.attachToRecyclerView(recyclerView)
         dvm.loadDevicesSummaries().observe(this, Observer {
             nvm.notificationProcessor.getNotificationList(nvm)
             if (dvm.deviceProcessor.repository.liveData.value?.isNotEmpty()!!) {
@@ -101,11 +123,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addDevice(viewClicked: View) {
-            val view = layoutInflater.inflate(R.layout.add_device_dialog, null)
-            val alertDialog = AlertDialog.Builder(this@MainActivity).create()
-            val etComments = view.findViewById(R.id.etComments) as EditText
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { _, _ -> binding.devicesVm!!.addDevice(etComments.text.toString()) }
-            alertDialog.setView(view);
-            alertDialog.show();
+        val view = layoutInflater.inflate(R.layout.add_device_dialog, null)
+        val alertDialog = AlertDialog.Builder(this@MainActivity).create()
+        val etComments = view.findViewById(R.id.etComments) as EditText
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { _, _ -> binding.devicesVm!!.addDevice(etComments.text.toString()) }
+        alertDialog.setView(view);
+        alertDialog.show();
     }
 }

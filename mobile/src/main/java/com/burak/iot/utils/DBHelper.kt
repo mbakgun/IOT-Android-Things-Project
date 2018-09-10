@@ -118,4 +118,10 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         sqliteDB.close()
         return deviceList
     }
+
+    fun deleteNotification(sentDate: Long) {
+        val sqliteDB = writableDatabase
+        sqliteDB.execSQL("DELETE FROM $TABLE_NAME_NOTIFICATION WHERE $COL_SENT_DATE= '$sentDate'");
+        sqliteDB.close()
+    }
 }

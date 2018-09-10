@@ -8,13 +8,14 @@ import com.burak.iot.model.notification.NotificationProcessor
 import com.burak.iot.utils.DBHelper
 
 class NotificationViewModel @JvmOverloads constructor(app: Application, val notificationProcessor: NotificationProcessor = NotificationProcessor()) : ObservableViewModel(app), NotificationProcessor.OnNotificationListener {
+
     var lastNotificationData: MutableList<Notification> = ArrayList()
-    var deviceListener: NotificationProcessor.OnNotificationListener? = null
+    var notificationListener: NotificationProcessor.OnNotificationListener? = null
     val db by lazy { DBHelper(app) }
     override val generatedTokens: MutableList<String> get() = db.getTokens()
 
     init {
-        deviceListener = this
+        notificationListener = this
         updateOutputs(db.getNotifications())
     }
 
@@ -22,6 +23,12 @@ class NotificationViewModel @JvmOverloads constructor(app: Application, val noti
         db.insertNotification(notification)
         notificationProcessor.saveNotification(notification)
         updateOutputs(notification)
+    }
+
+    override fun onDelete(sentDate: Long) {
+        db.deleteNotification(sentDate)
+        notificationProcessor.deleteNotification(this, sentDate)
+        notifyChange()
     }
 
     fun updateOutputs(nd: MutableList<Notification>) {

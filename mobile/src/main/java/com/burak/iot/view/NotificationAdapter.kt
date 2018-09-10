@@ -11,7 +11,7 @@ import com.burak.iot.model.notification.Notification
 class NotificationAdapter(val onItemSelected: (item: Notification) -> Unit)
     : RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
 
-    private val notificationSummaries = mutableListOf<Notification>()
+    val notificationSummaries = mutableListOf<Notification>()
 
     fun updateList(updates: List<Notification>) {
         notificationSummaries.clear()
